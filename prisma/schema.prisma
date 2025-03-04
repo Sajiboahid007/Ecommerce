@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  Id         Int      @id(map: "PK__Users__3214EC07E695FA05") @default(autoincrement())
+  Name       String?  @db.NVarChar(100)
+  Email      String   @unique(map: "UQ__Users__A9D10534CA19E9B3") @db.NVarChar(255)
+  Password   String   @db.NVarChar(Max)
+  Address    String?  @db.NVarChar(255)
+  CreateDate DateTime @default(now(), map: "DF__Users__CreateDat__4AB81AF0") @db.DateTime
+}
+
+model Brands {
+  Id         Int       @id(map: "PK__Brands__3214EC07D1A4DBFD") @default(autoincrement())
+  Name       String?   @db.VarChar(30)
+  CreateDate DateTime? @default(now(), map: "DF__Brands__CreateDa__5EBF139D") @db.DateTime
+  UpdateDate DateTime? @db.DateTime
+  CreatedBy  String?   @db.NVarChar(Max)
+  UpdatedBy  String?   @db.NVarChar(Max)
+}
