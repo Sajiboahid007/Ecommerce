@@ -1,4 +1,4 @@
-enum HttpStatusCode {
+const enum HttpStatusCode {
   Ok = 200,
 
   BadRequest = 400,

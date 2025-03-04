@@ -39,7 +39,7 @@ const authenticate = (
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.userId = decoded.userId; // Store the user ID in the request object
-    req.userEmail = decoded.email;
+    req.userEmail = decoded.userEmail;
     next();
   } catch (error) {
     return res
@@ -58,7 +58,6 @@ app.post("/register", async (req: Request, res: Response) => {
     });
     return res.status(HttpStatusCode.Ok).send(users);
   } catch (error) {
-    console.error(error);
     return res.status(HttpStatusCode.BadRequest).send(error);
   }
 });
@@ -84,9 +83,13 @@ app.post("/login", async (req: Request, res: Response) => {
         .json({ message: "Invalid Password" });
     }
 
-    const token = jwt.sign({ userId: user.Id, email: user.Email }, JWT_SECRET, {
-      expiresIn: "5m",
-    });
+    const token = jwt.sign(
+      { userId: user.Id, userEmail: user.Email },
+      JWT_SECRET,
+      {
+        expiresIn: "5m",
+      }
+    );
 
     res.json({ token });
   } catch (error) {
@@ -94,11 +97,6 @@ app.post("/login", async (req: Request, res: Response) => {
       .status(HttpStatusCode.InternalServerError)
       .json({ message: "Internal server error" });
   }
-});
-
-app.get("/test", authenticate, (req: Request, res: Response) => {
-  console.log(req.headers);
-  return res.status(HttpStatusCode.Ok).json({ message: "somethjrbngjneg" });
 });
 
 app.get("/user/get", authenticate, async (req: Request, res: Response) => {
@@ -170,3 +168,26 @@ app.post(
     }
   }
 );
+
+app.get("/brand/get", authenticate, async (req: any, res: any) => {
+  try {
+    const brandList = await prisma.brands.findMany({
+      orderBy: { Id: "desc" },
+    });
+    return res.status(HttpStatusCode.Ok).json(brandList);
+  } catch (error: any) {
+    return res
+      .status(HttpStatusCode.BadRequest)
+      .json({ message: error?.message });
+  }
+});
+
+app.get("/test", authenticate, (req: AuthenticatedRequest, res: Response) => {
+  try {
+    return res.status(HttpStatusCode.Ok).json({ message: "test" });
+  } catch (error: any) {
+    return res
+      .status(HttpStatusCode.BadRequest)
+      .json({ message: error?.message });
+  }
+});

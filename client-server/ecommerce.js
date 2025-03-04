@@ -26,7 +26,9 @@ const authenticate = (req, res, next) => {
     var _a;
     const token = (_a = req.headers["authorization"]) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
     if (!token) {
-        return res.status(401).json({ message: "Authorization token required" });
+        return res
+            .status(401 /* HttpStatusCode.UnAuthorized */)
+            .json({ message: "Authorization token required" });
     }
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
@@ -35,7 +37,9 @@ const authenticate = (req, res, next) => {
         next();
     }
     catch (error) {
-        return res.status(401).json({ message: "Invalid or expired token" });
+        return res
+            .status(401 /* HttpStatusCode.UnAuthorized */)
+            .json({ message: "Invalid or expired token" });
     }
 };
 app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -45,11 +49,10 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const users = yield prisma.users.create({
             data: userInfo,
         });
-        return res.send(users);
+        return res.status(200 /* HttpStatusCode.Ok */).send(users);
     }
     catch (error) {
-        console.error(error);
-        return res.status(400).send(error);
+        return res.status(400 /* HttpStatusCode.BadRequest */).send(error);
     }
 }));
 app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -59,11 +62,15 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             where: { Email },
         });
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "User not found" });
         }
         const matchPassword = yield bcrypt.compare(Password, user.Password);
         if (!matchPassword) {
-            return res.status(400).json({ message: "Invalid Password" });
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "Invalid Password" });
         }
         const token = jwt.sign({ userId: user.Id, email: user.Email }, JWT_SECRET, {
             expiresIn: "5m",
@@ -71,22 +78,20 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.json({ token });
     }
     catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res
+            .status(500 /* HttpStatusCode.InternalServerError */)
+            .json({ message: "Internal server error" });
     }
 }));
-app.get("/test", authenticate, (req, res) => {
-    console.log(req.headers);
-    return res.status(200).json({ message: "somethjrbngjneg" });
-});
 app.get("/user/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield prisma.users.findMany({
             orderBy: { Id: "desc" },
         });
-        return res.status(200).json(users);
+        return res.status(200 /* HttpStatusCode.Ok */).json(users);
     }
     catch (error) {
-        return res.status(400).json(error);
+        return res.status(400 /* HttpStatusCode.BadRequest */).json(error);
     }
 }));
 app.get("/getUserInfoById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,10 +102,10 @@ app.get("/getUserInfoById/:id", authenticate, (req, res) => __awaiter(void 0, vo
                 Id: id,
             },
         });
-        return res.status(200).json(userInfo);
+        return res.status(200 /* HttpStatusCode.Ok */).json(userInfo);
     }
     catch (error) {
-        return res.status(400).json(error);
+        return res.status(400 /* HttpStatusCode.BadRequest */).json(error);
     }
 }));
 app.put("/user/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -113,17 +118,19 @@ app.put("/user/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0
             },
         });
         if (!isExist) {
-            return res.status(400).json({ Message: "Not found" });
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ Message: "Not found" });
         }
         const { Name, Address } = req === null || req === void 0 ? void 0 : req.body;
         const updateUser = yield prisma.users.update({
             data: { Name: Name, Address: Address },
             where: { Id: id },
         });
-        return res.status(200).json(updateUser);
+        return res.status(200 /* HttpStatusCode.Ok */).json(updateUser);
     }
     catch (error) {
-        return res.status(400).json(error);
+        return res.status(400 /* HttpStatusCode.BadRequest */).json(error);
     }
 }));
 app.post("/brand/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -132,9 +139,32 @@ app.post("/brand/create", authenticate, (req, res) => __awaiter(void 0, void 0, 
         const brandInfo = yield prisma.brands.create({
             data: { Name: brand === null || brand === void 0 ? void 0 : brand.Name, CreatedBy: req.userEmail },
         });
-        return res.status(HttpStatusCode.Ok).json(brandInfo);
+        return res.status(200 /* HttpStatusCode.Ok */).json(brandInfo);
     }
     catch (error) {
-        return res.status(HttpStatusCode.BadRequest).json(error);
+        return res.status(400 /* HttpStatusCode.BadRequest */).json(error);
     }
 }));
+app.get("/brand/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const brandList = yield prisma.brands.findMany({
+            orderBy: { Id: "desc" },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(brandList);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/test", authenticate, (req, res) => {
+    try {
+        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "test" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+});
