@@ -182,12 +182,51 @@ app.get("/brand/get", authenticate, async (req: any, res: any) => {
   }
 });
 
-app.get("/test", authenticate, (req: AuthenticatedRequest, res: Response) => {
-  try {
-    return res.status(HttpStatusCode.Ok).json({ message: "test" });
-  } catch (error: any) {
-    return res
-      .status(HttpStatusCode.BadRequest)
-      .json({ message: error?.message });
+app.get(
+  "/brand/getById/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const getById = await prisma.brands.findFirst({
+        where: { Id: id },
+      });
+      if (!getById) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ Message: "Not found" });
+      }
+      return res.status(HttpStatusCode.Ok).json(getById);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
   }
-});
+);
+
+app.delete(
+  "/brand/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const brand = await prisma.brands.findFirst({
+        where: { Id: id },
+      });
+      if (!brand) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      await prisma.brands.delete({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json({ message: "Deleted!" });
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);

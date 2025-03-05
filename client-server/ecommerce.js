@@ -33,7 +33,7 @@ const authenticate = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.userId = decoded.userId; // Store the user ID in the request object
-        req.userEmail = decoded.email;
+        req.userEmail = decoded.userEmail;
         next();
     }
     catch (error) {
@@ -72,7 +72,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .status(400 /* HttpStatusCode.BadRequest */)
                 .json({ message: "Invalid Password" });
         }
-        const token = jwt.sign({ userId: user.Id, email: user.Email }, JWT_SECRET, {
+        const token = jwt.sign({ userId: user.Id, userEmail: user.Email }, JWT_SECRET, {
             expiresIn: "5m",
         });
         res.json({ token });
@@ -158,13 +158,44 @@ app.get("/brand/get", authenticate, (req, res) => __awaiter(void 0, void 0, void
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
     }
 }));
-app.get("/test", authenticate, (req, res) => {
+app.get("/brand/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "test" });
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const getById = yield prisma.brands.findFirst({
+            where: { Id: id },
+        });
+        if (!getById) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ Message: "Not found" });
+        }
+        return res.status(200 /* HttpStatusCode.Ok */).json(getById);
     }
     catch (error) {
         return res
             .status(400 /* HttpStatusCode.BadRequest */)
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
     }
-});
+}));
+app.delete("/brand/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const brand = yield prisma.brands.findFirst({
+            where: { Id: id },
+        });
+        if (!brand) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        yield prisma.brands.delete({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "Deleted!" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
