@@ -199,3 +199,117 @@ app.delete("/brand/delete/:id", authenticate, (req, res) => __awaiter(void 0, vo
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
     }
 }));
+app.put("/brand/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const brandLisat = yield prisma.brands.findFirst({
+            where: { Id: id },
+        });
+        if (!brandLisat) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "Not found!" });
+        }
+        const { Name } = req === null || req === void 0 ? void 0 : req.body;
+        const updateInfo = yield prisma.brands.update({
+            data: { Name: Name, UpdatedBy: req.userEmail, UpdateDate: new Date() },
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(updateInfo);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/categories/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const category = yield prisma.categories.findMany({
+            orderBy: { Id: "desc" },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(category);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/categories/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const getById = yield prisma.categories.findFirst({
+            where: { Id: id },
+        });
+        if (!getById) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ Message: "Not found" });
+        }
+        return res.status(200 /* HttpStatusCode.Ok */).json(getById);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.post("/categories/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const category = req === null || req === void 0 ? void 0 : req.body;
+        const categoryInfo = yield prisma.categories.create({
+            data: { Name: category === null || category === void 0 ? void 0 : category.Name, CreatedBy: req.userEmail },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(categoryInfo);
+    }
+    catch (error) {
+        return res.status(400 /* HttpStatusCode.BadRequest */).json(error);
+    }
+}));
+app.put("/categories/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const brandLisat = yield prisma.categories.findFirst({
+            where: { Id: id },
+        });
+        if (!brandLisat) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "Not found!" });
+        }
+        const { Name } = req === null || req === void 0 ? void 0 : req.body;
+        const updateInfo = yield prisma.categories.update({
+            data: { Name: Name, UpdatedBy: req.userEmail, UpdateDate: new Date() },
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(updateInfo);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.delete("/categories/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const category = yield prisma.categories.findFirst({
+            where: { Id: id },
+        });
+        if (!category) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        yield prisma.categories.delete({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "Deleted!" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));

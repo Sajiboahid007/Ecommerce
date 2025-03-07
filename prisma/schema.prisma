@@ -24,3 +24,12 @@ model Brands {
   CreatedBy  String?   @db.NVarChar(Max)
   UpdatedBy  String?   @db.NVarChar(Max)
 }
+
+model Categories {
+  Id         Int       @id(map: "PK__Categori__3214EC07A6A43E7B") @default(autoincrement())
+  Name       String?   @db.VarChar(Max)
+  CreatedBy  String?   @db.VarChar(Max)
+  CreateDate DateTime? @default(now(), map: "DF__Categorie__Creat__74AE54BC") @db.DateTime
+  UpdatedBy  String?   @db.VarChar(Max)
+  UpdateDate DateTime? @db.DateTime
+}

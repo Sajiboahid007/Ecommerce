@@ -230,3 +230,152 @@ app.delete(
     }
   }
 );
+
+app.put(
+  "/brand/update/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+
+      const brandLisat = await prisma.brands.findFirst({
+        where: { Id: id },
+      });
+
+      if (!brandLisat) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "Not found!" });
+      }
+
+      const { Name } = req?.body;
+
+      const updateInfo = await prisma.brands.update({
+        data: { Name: Name, UpdatedBy: req.userEmail, UpdateDate: new Date() },
+        where: { Id: id },
+      });
+
+      return res.status(HttpStatusCode.Ok).json(updateInfo);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/categories/get",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const category = await prisma.categories.findMany({
+        orderBy: { Id: "desc" },
+      });
+
+      return res.status(HttpStatusCode.Ok).json(category);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/categories/getById/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const getById = await prisma.categories.findFirst({
+        where: { Id: id },
+      });
+      if (!getById) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ Message: "Not found" });
+      }
+      return res.status(HttpStatusCode.Ok).json(getById);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.post(
+  "/categories/create",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const category = req?.body;
+      const categoryInfo = await prisma.categories.create({
+        data: { Name: category?.Name, CreatedBy: req.userEmail },
+      });
+      return res.status(HttpStatusCode.Ok).json(categoryInfo);
+    } catch (error) {
+      return res.status(HttpStatusCode.BadRequest).json(error);
+    }
+  }
+);
+
+app.put(
+  "/categories/update/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+
+      const categoryLisat = await prisma.categories.findFirst({
+        where: { Id: id },
+      });
+
+      if (!categoryLisat) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "Not found!" });
+      }
+
+      const { Name } = req?.body;
+
+      const updateInfo = await prisma.categories.update({
+        data: { Name: Name, UpdatedBy: req.userEmail, UpdateDate: new Date() },
+        where: { Id: id },
+      });
+
+      return res.status(HttpStatusCode.Ok).json(updateInfo);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.delete(
+  "/categories/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const category = await prisma.categories.findFirst({
+        where: { Id: id },
+      });
+      if (!category) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      await prisma.categories.delete({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json({ message: "Deleted!" });
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
