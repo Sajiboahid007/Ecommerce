@@ -319,6 +319,13 @@ app.get("/subcategories/get", authenticate, (req, res) => __awaiter(void 0, void
             orderBy: {
                 Id: "desc",
             },
+            include: {
+                Categories: {
+                    select: {
+                        Name: true, // Fetch only the Category Name
+                    },
+                },
+            },
         });
         return res.status(200 /* HttpStatusCode.Ok */).json(subcategories);
     }

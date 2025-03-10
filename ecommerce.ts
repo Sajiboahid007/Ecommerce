@@ -389,6 +389,13 @@ app.get(
         orderBy: {
           Id: "desc",
         },
+        include: {
+          Categories: {
+            select: {
+              Name: true, // Fetch only the Category Name
+            },
+          },
+        },
       });
       return res.status(HttpStatusCode.Ok).json(subcategories);
     } catch (error: any) {
