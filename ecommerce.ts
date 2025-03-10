@@ -379,3 +379,124 @@ app.delete(
     }
   }
 );
+
+app.get(
+  "/subcategories/get",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const subcategories = await prisma.subCategories.findMany({
+        orderBy: {
+          Id: "desc",
+        },
+      });
+      return res.status(HttpStatusCode.Ok).json(subcategories);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/subcategories/getById/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const subcategories = await prisma.subCategories.findFirst({
+        where: {
+          Id: id,
+        },
+      });
+      return res.status(HttpStatusCode.Ok).json(subcategories);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.post(
+  "/subcategories/create",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const subcategories = req?.body;
+      const subCategoriesdata = await prisma.subCategories.create({
+        data: {
+          Name: subcategories?.Name,
+          CategoryId: subcategories?.CategoryId,
+          CreatedBy: req.userEmail,
+          CreateDate: new Date(),
+        },
+      });
+      return res.status(HttpStatusCode.Ok).json(subCategoriesdata);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.put(
+  "/subcategories/update/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.subCategories.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      const updatedReq = req?.body;
+      const subCategory = await prisma.subCategories.update({
+        data: {
+          Name: updatedReq?.Name,
+          CategoryId: updatedReq?.CategoryId,
+          UpdatedBy: req.userEmail,
+          UpdateDate: new Date(),
+        },
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json(subCategory);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.delete(
+  "/subcategories/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.subCategories.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      await prisma.subCategories.delete({
+        where: { Id: id },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json({ message: "successfully deleted" });
+    } catch (error) {
+      return res.status(HttpStatusCode.BadRequest).json({ message: "invalid" });
+    }
+  }
+);

@@ -270,10 +270,10 @@ app.post("/categories/create", authenticate, (req, res) => __awaiter(void 0, voi
 app.put("/categories/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
-        const brandLisat = yield prisma.categories.findFirst({
+        const categoryLisat = yield prisma.categories.findFirst({
             where: { Id: id },
         });
-        if (!brandLisat) {
+        if (!categoryLisat) {
             return res
                 .status(400 /* HttpStatusCode.BadRequest */)
                 .json({ message: "Not found!" });
@@ -311,5 +311,106 @@ app.delete("/categories/delete/:id", authenticate, (req, res) => __awaiter(void 
         return res
             .status(400 /* HttpStatusCode.BadRequest */)
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/subcategories/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const subcategories = yield prisma.subCategories.findMany({
+            orderBy: {
+                Id: "desc",
+            },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(subcategories);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/subcategories/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const subcategories = yield prisma.subCategories.findFirst({
+            where: {
+                Id: id,
+            },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(subcategories);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.post("/subcategories/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const subcategories = req === null || req === void 0 ? void 0 : req.body;
+        const subCategoriesdata = yield prisma.subCategories.create({
+            data: {
+                Name: subcategories === null || subcategories === void 0 ? void 0 : subcategories.Name,
+                CategoryId: subcategories === null || subcategories === void 0 ? void 0 : subcategories.CategoryId,
+                CreatedBy: req.userEmail,
+                CreateDate: new Date(),
+            },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(subCategoriesdata);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.put("/subcategories/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.subCategories.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        const updatedReq = req === null || req === void 0 ? void 0 : req.body;
+        const subCategory = yield prisma.subCategories.update({
+            data: {
+                Name: updatedReq === null || updatedReq === void 0 ? void 0 : updatedReq.Name,
+                CategoryId: updatedReq === null || updatedReq === void 0 ? void 0 : updatedReq.CategoryId,
+                UpdatedBy: req.userEmail,
+                UpdateDate: new Date(),
+            },
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(subCategory);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.delete("/subcategories/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.subCategories.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        yield prisma.subCategories.delete({
+            where: { Id: id },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json({ message: "successfully deleted" });
+    }
+    catch (error) {
+        return res.status(400 /* HttpStatusCode.BadRequest */).json({ message: "invalid" });
     }
 }));

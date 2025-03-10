@@ -26,10 +26,22 @@ model Brands {
 }
 
 model Categories {
-  Id         Int       @id(map: "PK__Categori__3214EC07A6A43E7B") @default(autoincrement())
-  Name       String?   @db.VarChar(Max)
-  CreatedBy  String?   @db.VarChar(Max)
-  CreateDate DateTime? @default(now(), map: "DF__Categorie__Creat__74AE54BC") @db.DateTime
-  UpdatedBy  String?   @db.VarChar(Max)
-  UpdateDate DateTime? @db.DateTime
+  Id            Int             @id(map: "PK__Categori__3214EC07A12700B3") @default(autoincrement())
+  Name          String?         @db.VarChar(Max)
+  CreatedBy     String?         @db.VarChar(Max)
+  CreateDate    DateTime?       @default(now(), map: "DF__Categorie__Creat__7B5B524B") @db.DateTime
+  UpdatedBy     String?         @db.VarChar(Max)
+  UpdateDate    DateTime?       @db.DateTime
+  SubCategories SubCategories[]
+}
+
+model SubCategories {
+  Id         Int         @id(map: "PK__SubCateg__3214EC0765BC86C8") @default(autoincrement())
+  Name       String?     @db.VarChar(Max)
+  CategoryId Int?
+  CreatedBy  String?     @db.VarChar(Max)
+  CreateDate DateTime?   @default(now(), map: "DF__SubCatego__Creat__03F0984C") @db.DateTime
+  UpdatedBy  String?     @db.VarChar(Max)
+  UpdateDate DateTime?   @db.DateTime
+  Categories Categories? @relation(fields: [CategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK__SubCatego__Categ__02FC7413")
 }
