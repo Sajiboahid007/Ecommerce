@@ -45,3 +45,34 @@ model SubCategories {
   UpdateDate DateTime?   @db.DateTime
   Categories Categories? @relation(fields: [CategoryId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK__SubCatego__Categ__02FC7413")
 }
+
+model Variations {
+  Id            Int             @id(map: "PK__Variatio__3214EC07D8364378") @default(autoincrement())
+  Type          String?         @db.VarChar(Max)
+  CreatedBy     String?         @db.VarChar(Max)
+  CreateDate    DateTime?       @default(now(), map: "DF__Variation__Creat__17F790F9") @db.DateTime
+  UpdatedBy     String?         @db.VarChar(Max)
+  UpdateDate    DateTime?       @db.DateTime
+  ProductImages ProductImages[]
+}
+
+model ProductImages {
+  Id          Int         @id(map: "PK__ProductI__3214EC07880D0497") @default(autoincrement())
+  Url         String?     @db.VarChar(Max)
+  VariationId Int?
+  ProductId   Int?
+  CreatedBy   String?     @db.VarChar(Max)
+  CreateDate  DateTime?   @default(now(), map: "DF__ProductIm__Creat__1F98B2C1") @db.DateTime
+  UpdatedBy   String?     @db.VarChar(Max)
+  UpdateDate  DateTime?   @db.DateTime
+  Variations  Variations? @relation(fields: [VariationId], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK__ProductIm__Varia__1AD3FDA4")
+}
+
+model StockKeepingUnits {
+  Id         Int       @id(map: "PK__StockKee__3214EC07F287E4DE") @default(autoincrement())
+  Name       String?   @db.VarChar(Max)
+  CreatedBy  String?   @db.VarChar(Max)
+  CreateDate DateTime? @default(now(), map: "DF__StockKeep__Creat__22751F6C") @db.DateTime
+  UpdatedBy  String?   @db.VarChar(Max)
+  UpdateDate DateTime? @db.DateTime
+}

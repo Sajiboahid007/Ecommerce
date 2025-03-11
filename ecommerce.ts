@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { realpathSync } from "fs";
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -504,6 +505,281 @@ app.delete(
         .json({ message: "successfully deleted" });
     } catch (error) {
       return res.status(HttpStatusCode.BadRequest).json({ message: "invalid" });
+    }
+  }
+);
+
+app.get(
+  "/variation/get",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const variationsList = await prisma.variations.findMany({
+        orderBy: { Id: "desc" },
+      });
+      return res.status(HttpStatusCode.Ok).json(variationsList);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+app.get(
+  "/variation/getBYId/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const variationsList = await prisma.variations.findFirst({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json(variationsList);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.post(
+  "/variation/create",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const variation = req?.body;
+      const createVariation = await prisma.variations.create({
+        data: {
+          Type: variation?.Type,
+          CreatedBy: req.userEmail,
+          CreateDate: new Date(),
+        },
+      });
+      return res.status(HttpStatusCode.Ok).json(createVariation);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.put(
+  "/variation/update/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.variations.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      const variation = req?.body;
+      const updateVariation = await prisma.variations.update({
+        data: {
+          Type: variation?.Type,
+          UpdatedBy: req.userEmail,
+          UpdateDate: new Date(),
+        },
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json(updateVariation);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.delete(
+  "/variation/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.variations.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      await prisma.variations.delete({
+        where: { Id: id },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json({ message: "successfully deleted" });
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/productImage/getByProdutId/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const productId = Number(req?.params.id);
+      const images = await prisma.productImages.findFirst({
+        where: { ProductId: productId },
+      });
+      return res.status(HttpStatusCode.Ok).json(images);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.delete(
+  "/productImage/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.productImages.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found" });
+      }
+      await prisma.productImages.delete({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json({ message: "Deletd" });
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/sku/get",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const sku = await prisma.stockKeepingUnits.findMany({
+        orderBy: { Id: "desc" },
+      });
+      return res.status(HttpStatusCode.Ok).json(sku);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/sku/getById/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const sku = await prisma.stockKeepingUnits.findFirst({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json(sku);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.post(
+  "/sku/create",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const sku = req?.body;
+      const createSku = await prisma.stockKeepingUnits.create({
+        data: {
+          Name: sku?.Name,
+          CreatedBy: req.userEmail,
+          CreateDate: new Date(),
+        },
+      });
+      return res.status(HttpStatusCode.Ok).json(createSku);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.put(
+  "/sku/update/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.stockKeepingUnits.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      const sku = req?.body;
+      const updateSku = await prisma.stockKeepingUnits.update({
+        data: {
+          Name: sku?.Name,
+          UpdatedBy: req.userEmail,
+          UpdateDate: new Date(),
+        },
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json(updateSku);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.delete(
+  "/sku/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.stockKeepingUnits.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found" });
+      }
+      await prisma.stockKeepingUnits.delete({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json({ message: "Deletd" });
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
     }
   }
 );

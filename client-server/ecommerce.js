@@ -421,3 +421,100 @@ app.delete("/subcategories/delete/:id", authenticate, (req, res) => __awaiter(vo
         return res.status(400 /* HttpStatusCode.BadRequest */).json({ message: "invalid" });
     }
 }));
+app.get("/variation/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const variationsList = yield prisma.variations.findMany({
+            orderBy: { Id: "desc" },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(variationsList);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/variation/getBYId/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const variationsList = yield prisma.variations.findFirst({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(variationsList);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.post("/variation/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const variation = req === null || req === void 0 ? void 0 : req.body;
+        const createVariation = yield prisma.variations.create({
+            data: {
+                Type: variation === null || variation === void 0 ? void 0 : variation.Type,
+                CreatedBy: req.userEmail,
+                CreateDate: new Date(),
+            },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(createVariation);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.put("/variation/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.variations.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        const variation = req === null || req === void 0 ? void 0 : req.body;
+        const updateVariation = yield prisma.variations.update({
+            data: {
+                Type: variation === null || variation === void 0 ? void 0 : variation.Type,
+                UpdatedBy: req.userEmail,
+                UpdateDate: new Date(),
+            },
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(updateVariation);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.delete("/variation/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.variations.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        yield prisma.variations.delete({
+            where: { Id: id },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json({ message: "successfully deleted" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
