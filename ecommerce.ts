@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET: string = "i love my country";
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const prisma = new PrismaClient();

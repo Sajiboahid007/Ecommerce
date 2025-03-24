@@ -17,6 +17,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "i love my country";
 const app = express();
+app.use(cors());
 app.use(express.json());
 const prisma = new client_1.PrismaClient();
 app.listen(3000, () => {
@@ -511,6 +512,137 @@ app.delete("/variation/delete/:id", authenticate, (req, res) => __awaiter(void 0
         return res
             .status(200 /* HttpStatusCode.Ok */)
             .json({ message: "successfully deleted" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/productImage/getByProdutId/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const productId = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const images = yield prisma.productImages.findFirst({
+            where: { ProductId: productId },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(images);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.delete("/productImage/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.productImages.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found" });
+        }
+        yield prisma.productImages.delete({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "Deletd" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/sku/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const sku = yield prisma.stockKeepingUnits.findMany({
+            orderBy: { Id: "desc" },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(sku);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.get("/sku/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const sku = yield prisma.stockKeepingUnits.findFirst({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(sku);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.post("/sku/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const sku = req === null || req === void 0 ? void 0 : req.body;
+        const createSku = yield prisma.stockKeepingUnits.create({
+            data: {
+                Name: sku === null || sku === void 0 ? void 0 : sku.Name,
+                CreatedBy: req.userEmail,
+                CreateDate: new Date(),
+            },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(createSku);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.put("/sku/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.stockKeepingUnits.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        const sku = req === null || req === void 0 ? void 0 : req.body;
+        const updateSku = yield prisma.stockKeepingUnits.update({
+            data: {
+                Name: sku === null || sku === void 0 ? void 0 : sku.Name,
+                UpdatedBy: req.userEmail,
+                UpdateDate: new Date(),
+            },
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json(updateSku);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.delete("/sku/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.stockKeepingUnits.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found" });
+        }
+        yield prisma.stockKeepingUnits.delete({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "Deletd" });
     }
     catch (error) {
         return res
