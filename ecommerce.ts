@@ -54,9 +54,14 @@ app.post("/register", async (req: Request, res: Response) => {
   try {
     const userInfo = req?.body;
     userInfo.Password = await bcrypt.hash(userInfo.Password, 10);
-
     const users = await prisma.users.create({
-      data: userInfo,
+      data: {
+        Name: userInfo?.Name,
+        Email: userInfo?.Email,
+        Password: userInfo?.Password,
+        Address: userInfo?.Address,
+        CreateDate: new Date(),
+      },
     });
     return res.status(HttpStatusCode.Ok).send(users);
   } catch (error) {
@@ -89,7 +94,7 @@ app.post("/login", async (req: Request, res: Response) => {
       { userId: user.Id, userEmail: user.Email },
       JWT_SECRET,
       {
-        expiresIn: "5m",
+        expiresIn: "1h",
       }
     );
 

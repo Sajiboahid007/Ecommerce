@@ -48,7 +48,13 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const userInfo = req === null || req === void 0 ? void 0 : req.body;
         userInfo.Password = yield bcrypt.hash(userInfo.Password, 10);
         const users = yield prisma.users.create({
-            data: userInfo,
+            data: {
+                Name: userInfo === null || userInfo === void 0 ? void 0 : userInfo.Name,
+                Email: userInfo === null || userInfo === void 0 ? void 0 : userInfo.Email,
+                Password: userInfo === null || userInfo === void 0 ? void 0 : userInfo.Password,
+                Address: userInfo === null || userInfo === void 0 ? void 0 : userInfo.Address,
+                CreateDate: new Date(),
+            },
         });
         return res.status(200 /* HttpStatusCode.Ok */).send(users);
     }
@@ -74,7 +80,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .json({ message: "Invalid Password" });
         }
         const token = jwt.sign({ userId: user.Id, userEmail: user.Email }, JWT_SECRET, {
-            expiresIn: "5m",
+            expiresIn: "1h",
         });
         res.json({ token });
     }
