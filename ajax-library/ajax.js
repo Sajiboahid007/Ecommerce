@@ -1,3 +1,13 @@
+function getCookie(name) {
+  let cookies = document.cookie.split("; ");
+  for (let cookie of cookies) {
+    let [key, value] = cookie.split("=");
+    if (key === name) return value;
+  }
+  return null;
+}
+const cookie = getCookie("token");
+
 const saveAjax = (url, jsonData) => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -5,6 +15,9 @@ const saveAjax = (url, jsonData) => {
       type: "POST",
       data: JSON.stringify(jsonData),
       contentType: "application/json",
+      headers: {
+        Authorization: `Bearer ${cookie}`,
+      },
       success: function (data) {
         resolve(data);
       },
@@ -22,6 +35,9 @@ const updateAjax = (url, jsonData) => {
       type: "PUT",
       data: JSON.stringify(jsonData),
       contentType: "application/json",
+      headers: {
+        Authorization: `Bearer ${cookie}`,
+      },
       success: function (data) {
         resolve(data);
       },
@@ -37,6 +53,9 @@ const getAjax = (url) => {
     $.ajax({
       url: url,
       type: "GET",
+      headers: {
+        Authorization: `Bearer ${cookie}`,
+      },
       success: function (data) {
         resolve(data);
       },
@@ -52,6 +71,9 @@ const deleteAjax = (url) => {
     $.ajax({
       url: url,
       type: "DELETE",
+      headers: {
+        Authorization: `Bearer ${cookie}`,
+      },
       success: function (data) {
         resolve(data);
       },

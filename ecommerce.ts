@@ -50,6 +50,14 @@ const authenticate = (
   }
 };
 
+const prepareData = (statusCode: any, data: any, errorMessage: any): any => {
+  return {
+    statusCode: statusCode,
+    data: data,
+    errorMessage: errorMessage,
+  };
+};
+
 app.post("/register", async (req: Request, res: Response) => {
   try {
     const userInfo = req?.body;
@@ -181,11 +189,13 @@ app.get("/brand/get", authenticate, async (req: any, res: any) => {
     const brandList = await prisma.brands.findMany({
       orderBy: { Id: "desc" },
     });
-    return res.status(HttpStatusCode.Ok).json(brandList);
+    return res
+      .status(HttpStatusCode.Ok)
+      .json(prepareData(HttpStatusCode.Ok, brandList, ""));
   } catch (error: any) {
     return res
       .status(HttpStatusCode.BadRequest)
-      .json({ message: error?.message });
+      .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
   }
 });
 
@@ -280,11 +290,13 @@ app.get(
         orderBy: { Id: "desc" },
       });
 
-      return res.status(HttpStatusCode.Ok).json(category);
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, category, ""));
     } catch (error: any) {
       return res
         .status(HttpStatusCode.BadRequest)
-        .json({ message: error?.message });
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
     }
   }
 );
@@ -404,11 +416,13 @@ app.get(
           },
         },
       });
-      return res.status(HttpStatusCode.Ok).json(subcategories);
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, subcategories, ""));
     } catch (error: any) {
       return res
         .status(HttpStatusCode.BadRequest)
-        .json({ message: error?.message });
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
     }
   }
 );

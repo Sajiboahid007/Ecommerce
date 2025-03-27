@@ -59,6 +59,16 @@
 <script src="../cdn/jquery.min.js"></script>
 <script src="../cdn/bootstrap.bundle.min.js"></script>
 
+<script src="../cdn/jquery.dataTables.min.js"></script>
+<script src="../cdn/dataTables.buttons.min.js"></script>
+<script src="../cdn/jszip.min.js"></script>
+<script src="../cdn/buttons.html5.min.js"></script>
+<script src="../cdn/buttons.print.min.js"></script>
+<script src="../cdn/pdfmake.min.js"></script>
+<script src="../cdn/vfs_fonts.js"></script>
+<script src="../cdn/dataTables.responsive.min.js"></script>
+
+
 <!-- Core plugin JavaScript-->
 <script src="../cdn/jquery.easing.min.js"></script>
 
@@ -67,12 +77,6 @@
 
 <script src="./../ajax-library/ajax.js"></script>
 <script src="./../application-helper/apllication-helper.js"></script>
-
-<!-- Page level custom scripts -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="../cdn/Chart.bundle.min.js"></script>
-<script src="../cdn/chart-area-demo.js"></script>
-<script src="../cdn/chart-pie-demo.js"></script>
 </body>
 
 </html>

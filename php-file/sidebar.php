@@ -36,7 +36,7 @@
                 data-target="#collapsePages"
                 aria-expanded="true"
                 aria-controls="collapsePages">
-                <span>Pages</span>
+                <span>Settings</span>
             </a>
             <div
                 id="collapsePages"
@@ -45,8 +45,13 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="login.html">Login</a>
+                    <a class="collapse-item" href="register.html">Register</a>
+                    <a class="collapse-item" href="brands.php">Brands</a>
+                    <a class="collapse-item" href="category.php">Categories</a>
+                    <a class="collapse-item" href="sub-category.php">Sub Categories</a>
                 </div>
             </div>
+
         </li>
     </ul>
     <!-- End of Sidebar -->
@@ -75,9 +80,7 @@
                             aria-haspopup="true"
                             aria-expanded="false">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                            <img
-                                class="img-profile rounded-circle"
-                                src="img/undraw_profile.svg" />
+
                         </a>
                         <!-- Dropdown - User Information -->
                         <div

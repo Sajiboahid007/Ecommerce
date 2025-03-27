@@ -43,6 +43,13 @@ const authenticate = (req, res, next) => {
             .json({ message: "Invalid or expired token" });
     }
 };
+const prepareData = (statusCode, data, errorMessage) => {
+    return {
+        statusCode: statusCode,
+        data: data,
+        errorMessage: errorMessage,
+    };
+};
 app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userInfo = req === null || req === void 0 ? void 0 : req.body;
@@ -157,12 +164,14 @@ app.get("/brand/get", authenticate, (req, res) => __awaiter(void 0, void 0, void
         const brandList = yield prisma.brands.findMany({
             orderBy: { Id: "desc" },
         });
-        return res.status(200 /* HttpStatusCode.Ok */).json(brandList);
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, brandList, ""));
     }
     catch (error) {
         return res
             .status(400 /* HttpStatusCode.BadRequest */)
-            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
     }
 }));
 app.get("/brand/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -235,12 +244,14 @@ app.get("/categories/get", authenticate, (req, res) => __awaiter(void 0, void 0,
         const category = yield prisma.categories.findMany({
             orderBy: { Id: "desc" },
         });
-        return res.status(200 /* HttpStatusCode.Ok */).json(category);
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, category, ""));
     }
     catch (error) {
         return res
             .status(400 /* HttpStatusCode.BadRequest */)
-            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
     }
 }));
 app.get("/categories/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -334,12 +345,14 @@ app.get("/subcategories/get", authenticate, (req, res) => __awaiter(void 0, void
                 },
             },
         });
-        return res.status(200 /* HttpStatusCode.Ok */).json(subcategories);
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, subcategories, ""));
     }
     catch (error) {
         return res
             .status(400 /* HttpStatusCode.BadRequest */)
-            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
     }
 }));
 app.get("/subcategories/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
