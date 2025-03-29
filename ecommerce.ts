@@ -119,9 +119,13 @@ app.get("/user/get", authenticate, async (req: Request, res: Response) => {
     const users = await prisma.users.findMany({
       orderBy: { Id: "desc" },
     });
-    return res.status(HttpStatusCode.Ok).json(users);
-  } catch (error) {
-    return res.status(HttpStatusCode.BadRequest).json(error);
+    return res
+      .status(HttpStatusCode.Ok)
+      .json(prepareData(HttpStatusCode.Ok, users, ""));
+  } catch (error: any) {
+    return res
+      .status(HttpStatusCode.BadRequest)
+      .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
   }
 });
 
@@ -537,11 +541,13 @@ app.get(
       const variationsList = await prisma.variations.findMany({
         orderBy: { Id: "desc" },
       });
-      return res.status(HttpStatusCode.Ok).json(variationsList);
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, variationsList, ""));
     } catch (error: any) {
       return res
         .status(HttpStatusCode.BadRequest)
-        .json({ message: error?.message });
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
     }
   }
 );
@@ -697,11 +703,13 @@ app.get(
       const sku = await prisma.stockKeepingUnits.findMany({
         orderBy: { Id: "desc" },
       });
-      return res.status(HttpStatusCode.Ok).json(sku);
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, sku, ""));
     } catch (error: any) {
       return res
         .status(HttpStatusCode.BadRequest)
-        .json({ message: error?.message });
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
     }
   }
 );

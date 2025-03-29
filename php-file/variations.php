@@ -1,30 +1,28 @@
 <?php include '../php-file/topbar.php'; ?>
 <?php include '../php-file/sidebar.php'; ?>
 
-<div class="card-body">
-    <h2>Sub Categories</h2>
-    <div class="table-responsive">
-        <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
-            <thead>
-                <tr>
-                    <th>Sl. No</th>
-                    <th>Name</th>
-                    <th>Category Name</th>
-                    <th>Created Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody> </tbody>
-        </table>
-    </div>
+<div class="table-responsive">
+    <h3 class="text-center">Variation</h3>
+    <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
+        <thead>
+            <tr>
+                <th>SL No</th>
+                <th>Type</th>
+                <th>Create Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
+
 <?php include '../php-file/footer.php'; ?>
 
 <script>
     (function() {
-        const subCategoryList = async () => {
+        const variationList = async () => {
             try {
-                const response = await getAjax(`${baseUrl}subcategories/get`)
+                const response = await getAjax(`${baseUrl}variation/get`)
                 console.log(response)
                 let columns = [{
                         data: "Id",
@@ -34,18 +32,15 @@
                         orderable: true
                     },
                     {
-                        data: "Name",
-                        orderable: true
-                    },
-                    {
-                        data: "Categories.Name",
+                        data: "Type",
                         orderable: true
                     },
                     {
                         data: "CreateDate",
                         render: function(data, type, row, meta) {
                             return GetFormattedDate(row?.CreateDate ?? new Date())
-                        }
+                        },
+                        orderable: true
                     },
                     {
                         data: "Id",
@@ -59,13 +54,12 @@
                 ]
                 configureTable("#dataTable", response?.data, columns)
             } catch (error) {
-                console.error(error);
-                alert("Failed to load Data")
+                console.log(error)
+                alert("Something went wrong")
             }
         }
-
-        $(document).ready(function() {
-            subCategoryList();
+        $(document).ready(() => {
+            variationList()
         })
     })()
 </script>

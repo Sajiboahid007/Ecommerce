@@ -81,7 +81,33 @@ function configureTable(tableId, data, columns) {
     ],
     pageLength: 10,
     dom: '<"top-wrapper d-flex justify-content-between align-items-center"lBf>rtip',
-    buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5", "print"],
+    buttons: [
+      {
+        extend: "copyHtml5",
+        text: "Copy", // Plain text label
+        className: "btn btn-sm btn-primary", // Bootstrap button classes
+      },
+      {
+        extend: "excelHtml5",
+        text: "Excel",
+        className: "btn btn-sm btn-success",
+      },
+      {
+        extend: "csvHtml5",
+        text: "CSV",
+        className: "btn btn-sm btn-info",
+      },
+      {
+        extend: "pdfHtml5",
+        text: "PDF",
+        className: "btn btn-sm btn-danger",
+      },
+      {
+        extend: "print",
+        text: "Print",
+        className: "btn btn-sm btn-secondary",
+      },
+    ],
     columns: columns,
     data: data,
     columnDefs: [{ className: "text-center", targets: "_all" }],

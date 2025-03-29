@@ -45,10 +45,13 @@
                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="login.html">Login</a>
-                    <a class="collapse-item" href="register.html">Register</a>
+                    <a class="collapse-item" href="register.html ">Register</a>
+                    <a class="collapse-item" href="user-list.php">User List</a>
+                    <a class="collapse-item" href="variations.php">Variations</a>
                     <a class="collapse-item" href="brands.php">Brands</a>
                     <a class="collapse-item" href="category.php">Categories</a>
                     <a class="collapse-item" href="sub-category.php">Sub Categories</a>
+                    <a class="collapse-item" href="sku.php">SKU</a>
                 </div>
             </div>
 
