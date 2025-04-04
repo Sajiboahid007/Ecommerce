@@ -89,6 +89,7 @@
         $('#dataTable tbody').on('click', '.delete-btn', function() {
             let id = $(this).data("id");
             if (confirm("Are you sure you want to delete ID: " + id + "?")) {
+
                 alert("Deleted ID: " + id);
             }
         });

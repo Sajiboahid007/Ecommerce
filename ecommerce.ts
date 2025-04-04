@@ -1,6 +1,7 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, response, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { realpathSync } from "fs";
+import { Param } from "@prisma/client/runtime/library";
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -801,6 +802,133 @@ app.delete(
           .json({ message: "not found" });
       }
       await prisma.stockKeepingUnits.delete({
+        where: { Id: id },
+      });
+      return res.status(HttpStatusCode.Ok).json({ message: "Deletd" });
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
+  "/color/get",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const color = await prisma.colors.findMany({
+        orderBy: { Id: "desc" },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, color, ""));
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
+    }
+  }
+);
+
+app.get(
+  "/color/getById/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const colorGetById = await prisma.colors.findFirst({
+        where: { Id: id },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, colorGetById, ""));
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
+    }
+  }
+);
+
+app.post(
+  "/color/create",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const color = req?.body;
+      const colorCreate = await prisma.colors.create({
+        data: {
+          Name: color?.Name,
+          ColorCode: color?.ColorCode,
+          CreatedBy: req?.userEmail,
+          CreateDate: new Date(),
+        },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, colorCreate, ""));
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
+    }
+  }
+);
+
+app.put(
+  "/color/update/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.colors.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      const update = req?.body;
+      const updatedData = await prisma.colors.update({
+        data: {
+          Name: update?.Name,
+          ColorCode: update.ColorCode,
+          UpdatedBy: req.userEmail,
+          UpdateDate: new Date(),
+        },
+        where: {
+          Id: id,
+        },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, updatedData, ""));
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json(prepareData(HttpStatusCode.BadRequest, null, error?.message));
+    }
+  }
+);
+
+app.delete(
+  "/color/delete/:id",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const id = Number(req?.params.id);
+      const isExit = await prisma.colors.findFirst({
+        where: { Id: id },
+      });
+      if (!isExit) {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "not found!" });
+      }
+      await prisma.colors.delete({
         where: { Id: id },
       });
       return res.status(HttpStatusCode.Ok).json({ message: "Deletd" });

@@ -677,3 +677,110 @@ app.delete("/sku/delete/:id", authenticate, (req, res) => __awaiter(void 0, void
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
     }
 }));
+app.get("/color/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const color = yield prisma.colors.findMany({
+            orderBy: { Id: "desc" },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, color, ""));
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
+    }
+}));
+app.get("/color/getById/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const colorGetById = yield prisma.colors.findFirst({
+            where: { Id: id },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, colorGetById, ""));
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
+    }
+}));
+app.post("/color/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const color = req === null || req === void 0 ? void 0 : req.body;
+        const colorCreate = yield prisma.colors.create({
+            data: {
+                Name: color === null || color === void 0 ? void 0 : color.Name,
+                ColorCode: color === null || color === void 0 ? void 0 : color.ColorCode,
+                CreatedBy: req === null || req === void 0 ? void 0 : req.userEmail,
+                CreateDate: new Date(),
+            },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, colorCreate, ""));
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
+    }
+}));
+app.put("/color/update/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.colors.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        const update = req === null || req === void 0 ? void 0 : req.body;
+        const updatedData = yield prisma.colors.update({
+            data: {
+                Name: update === null || update === void 0 ? void 0 : update.Name,
+                ColorCode: update.ColorCode,
+                UpdatedBy: req.userEmail,
+                UpdateDate: new Date(),
+            },
+            where: {
+                Id: id,
+            },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, updatedData, ""));
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json(prepareData(400 /* HttpStatusCode.BadRequest */, null, error === null || error === void 0 ? void 0 : error.message));
+    }
+}));
+app.delete("/color/delete/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = Number(req === null || req === void 0 ? void 0 : req.params.id);
+        const isExit = yield prisma.colors.findFirst({
+            where: { Id: id },
+        });
+        if (!isExit) {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "not found!" });
+        }
+        yield prisma.colors.delete({
+            where: { Id: id },
+        });
+        return res.status(200 /* HttpStatusCode.Ok */).json({ message: "Deletd" });
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));

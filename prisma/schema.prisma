@@ -76,3 +76,13 @@ model StockKeepingUnits {
   UpdatedBy  String?   @db.VarChar(Max)
   UpdateDate DateTime? @db.DateTime
 }
+
+model Colors {
+  Id         Int       @id(map: "PK__Colors__3214EC07C071EE20") @default(autoincrement())
+  Name       String?   @db.VarChar(Max)
+  ColorCode  String?   @db.VarChar(Max)
+  CreatedBy  String?   @db.VarChar(Max)
+  CreateDate DateTime? @default(now(), map: "DF__Colors__CreateDa__29221CFB") @db.DateTime
+  UpdatedBy  String?   @db.VarChar(Max)
+  UpdateDate DateTime? @db.DateTime
+}
