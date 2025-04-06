@@ -3,7 +3,7 @@
 
 <div class="table-responsive">
     <h3 class="text-center">Variation</h3>
-    <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
+    <table class="table table-bordered" id="datatable" cellspacing="0" style="overflow-x: hidden;">
         <thead>
             <tr>
                 <th>SL No</th>
@@ -46,8 +46,8 @@
                         data: "Id",
                         render: function(data, type, row) {
                             return `
-                        <button class="btn btn-sm btn-primary editBtn" data-id='${row.Id}'>Edit</button>
-                        <button class="btn btn-sm btn-danger deleteBtn" data-id='${row.Id}'>Delete</button>
+                        <button class="btn btn-sm btn-primary edit-btn" data-id='${row.Id}'>Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id='${row.Id}'>Delete</button>
                         `
                         }
                     }
@@ -58,6 +58,24 @@
                 alert("Something went wrong")
             }
         }
+
+        const Delete = async (id) => {
+            try {
+                await deleteAjax(`${baseUrl}variation/delete/${id}`);
+                variationList();
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        $(document).on("click", ".delete-btn", function() {
+            const id = $(this).data("id")
+            if (confirm("Are you sure you want to delete this variation?")) {
+                Delete(id)
+            }
+        })
+
+
         $(document).ready(() => {
             variationList()
         })

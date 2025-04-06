@@ -21,7 +21,6 @@
         const skuList = async () => {
             try {
                 const response = await getAjax(`${baseUrl}sku/get`)
-                console.log(response)
                 let columns = [{
                         data: "Id",
                         render: function(data, type, row, meta) {
@@ -44,8 +43,8 @@
                         data: "Id",
                         render: function(data, type, row) {
                             return `
-                        <button class="btn btn-sm btn-primary editBtn" data-id='${row.Id}'>Edit</button>
-                        <button class="btn btn-sm btn-danger deleteBtn" data-id='${row.Id}'>Delete</button>
+                        <button class="btn btn-sm btn-primary edit-btn" data-id='${row.Id}'>Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id='${row.Id}'>Delete</button>
                         `
                         }
                     }
@@ -56,6 +55,23 @@
                 alert("Something went wrong")
             }
         }
+
+        const Delete = async (id) => {
+            try {
+                await deleteAjax(`${baseUrl}sku/delete/${id}`);
+                skuList();
+            } catch (error) {
+                console.error(eerror)
+            }
+        }
+
+        $("#datatable tbody").on('click', '.delete-btn', function() {
+            let id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this SKU?")) {
+                Delete(id);
+            }
+        })
+
         $(document).ready(() => {
             skuList()
         })

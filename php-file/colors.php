@@ -62,6 +62,24 @@
             }
         }
 
+        const Delete = async (id) => {
+            console.log(id)
+            try {
+                await deleteAjax(`${baseUrl}color/delete/${id}`);
+                generateColorList();
+                alert("Deleted!")
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        $('#datatable tbody').on('click', '.delete-btn', function() { // Corrected selector
+            let id = $(this).data("id");
+            if (confirm("Are you sure you want to delete ID: " + id + "?")) {
+                Delete(id);
+            }
+        });
+
         $(document).ready(function() {
             generateColorList();
         })

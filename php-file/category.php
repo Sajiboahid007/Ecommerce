@@ -59,6 +59,22 @@
             }
         }
 
+        const Delete = async function(id) {
+            try {
+                await deleteAjax(`${baseUrl}categories/delete/${id}`);
+                categoryList();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        $("#dataTable").on("click", ".deleteBtn", function() {
+            const id = $(this).data("id");
+            if (confirm("Are you sure you want to delete this category?")) {
+                Delete(id);
+            }
+        });
+
 
         $(document).ready(function() {
             categoryList();

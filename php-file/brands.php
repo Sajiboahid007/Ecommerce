@@ -26,12 +26,10 @@
             console.log("Edit ID:", id);
         };
 
-        window.Delete = async function(id) {
-            console.log(id)
+        const Delete = async function(id) {
             try {
                 const response = await deleteAjax(`${baseUrl}brand/delete/${id}`);
                 generateList();
-                alert('Deletd!')
             } catch (error) {
                 console.error(error);
             }
@@ -89,8 +87,7 @@
         $('#dataTable tbody').on('click', '.delete-btn', function() {
             let id = $(this).data("id");
             if (confirm("Are you sure you want to delete ID: " + id + "?")) {
-
-                alert("Deleted ID: " + id);
+                Delete(id)
             }
         });
 
