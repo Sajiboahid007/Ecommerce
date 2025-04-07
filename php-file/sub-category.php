@@ -24,8 +24,7 @@
     (function() {
         const subCategoryList = async () => {
             try {
-                const response = await getAjax(`${baseUrl}subcategories/get`)
-                console.log(response)
+                const response = await getAjax(`${baseUrl}subcategories/get`);
                 let columns = [{
                         data: "Id",
                         render: function(data, type, row, meta) {
@@ -63,6 +62,22 @@
                 alert("Failed to load Data")
             }
         }
+
+        const Delete = async (id) => {
+            try {
+                await deleteAjax(`${baseUrl}subcategories/delete/${id}`);
+                subCategoryList();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        $("#dataTable tbody").on('click', '.deleteBtn', function() {
+            let id = $(this).data('id');
+            if (confirm("Are you sure you want to delete ID: " + id + "?")) {
+                Delete(id)
+            }
+        })
 
         $(document).ready(function() {
             subCategoryList();

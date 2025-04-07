@@ -2,6 +2,9 @@
 <?php include '../php-file/sidebar.php'; ?>
 
 <div class="card-body">
+    <div>
+        <button class="btn btn-success" id="categoris-create">Add Categories</button>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
             <thead>
@@ -25,7 +28,6 @@
             try {
 
                 const response = await getAjax(`${baseUrl}categories/get`)
-                console.log(response)
                 let columns = [{
                         data: 'Id',
                         render: function(data, type, row, meta) {
@@ -68,6 +70,34 @@
             }
         }
 
+        const save = async (formdata) => {
+            try {
+                const response = await saveAjax(`${baseUrl}categories/create`, formdata);
+                closeModal();
+                categoryList();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        const addCreateForm = async () => {
+            try {
+                const response = await getAjax(`./../php-file/categories-create.php`);
+                openModal("Create Categories", response)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+
+        $("#categoris-create").click(function() {
+            addCreateForm();
+        })
+
+        $('#saveItem').click(function() {
+            const formdata = getFormData('categories-create');
+            save(formdata);
+        })
         $("#dataTable").on("click", ".deleteBtn", function() {
             const id = $(this).data("id");
             if (confirm("Are you sure you want to delete this category?")) {

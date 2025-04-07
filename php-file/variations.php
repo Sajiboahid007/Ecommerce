@@ -2,6 +2,9 @@
 <?php include '../php-file/sidebar.php'; ?>
 
 <div class="table-responsive">
+    <div>
+        <button class="btn btn-success" id="create-btn">Add Variation</button>
+    </div>
     <h3 class="text-center">Variation</h3>
     <table class="table table-bordered" id="datatable" cellspacing="0" style="overflow-x: hidden;">
         <thead>
@@ -52,7 +55,7 @@
                         }
                     }
                 ]
-                configureTable("#dataTable", response?.data, columns)
+                configureTable("#datatable", response?.data, columns)
             } catch (error) {
                 console.log(error)
                 alert("Something went wrong")
@@ -68,6 +71,33 @@
             }
         }
 
+        const addCreateForm = async () => {
+            try {
+                const response = await getAjax(`./../php-file/variation-create.php`);
+                openModal('Create Variation', response);
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        const save = async (formdata) => {
+            try {
+                const response = await saveAjax(`${baseUrl}variation/create`, formdata);
+                closeModal();
+                variationList()
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        $('#saveItem').click(function() {
+            const formdata = getFormData('variation-create');
+            save(formdata);
+        })
+
+        $('#create-btn').click(function() {
+            addCreateForm();
+        })
         $(document).on("click", ".delete-btn", function() {
             const id = $(this).data("id")
             if (confirm("Are you sure you want to delete this variation?")) {

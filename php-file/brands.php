@@ -3,7 +3,11 @@
 <?php include '../php-file/sidebar.php'; ?>
 
 <div class="card-body">
-    <div class="table-responsive">
+    <div>
+        <button class="btn btn-success" id="create-btn">Add Brands</button>
+    </div>
+
+    <div class="table-responsive mt-2">
         <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
             <thead>
                 <tr>
@@ -77,6 +81,34 @@
                 console.error(error);
             }
         }
+
+        const addCreateForm = async () => {
+            try {
+                const response = await getAjax(`./../php-file/brands-create.php`)
+                openModal("Create brands", response);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        const save = async (FormData) => {
+            try {
+                const response = await saveAjax(`${baseUrl}brand/create`, FormData);
+                closeModal();
+                generateList();
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+
+        $('#saveItem').click(function() {
+            const formdata = getFormData('create-brands');
+            save(formdata);
+        })
+        $('#create-btn').click(function() {
+            addCreateForm();
+        })
 
 
         $('#dataTable tbody').on('click', '.edit-btn', function() {
