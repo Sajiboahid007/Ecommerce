@@ -1,6 +1,9 @@
 <?php include '../php-file/topbar.php'; ?>
 <?php include '../php-file/sidebar.php'; ?>
 <div class="card-body">
+    <div>
+        <button class="btn btn-success" id="create-btn">Color Add</button>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered" id="datatable">
             <thead>
@@ -72,6 +75,34 @@
                 console.log(error);
             }
         }
+
+        const save = async (formData) => {
+            try {
+                const response = await saveAjax(`${baseUrl}color/create`, formData);
+                closeModal();
+                generateColorList();
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+
+        const addCreateForm = async () => {
+            try {
+                const response = await getAjax(`./../php-file/color-create.php`);
+                openModal("Create Color", response)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        $('#saveItem').click(function() {
+            const formData = getFormData('color-create')
+            save(formData)
+        })
+        $("#create-btn").click(function() {
+            addCreateForm()
+        })
 
         $('#datatable tbody').on('click', '.delete-btn', function() { // Corrected selector
             let id = $(this).data("id");

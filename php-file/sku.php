@@ -1,6 +1,9 @@
 <?php include '../php-file/topbar.php'; ?>
 <?php include '../php-file/sidebar.php'; ?>
 <div class="table-responsive">
+    <div>
+        <button class="btn btn-success" id="create-btn"> Add Sku </button>
+    </div>
     <table class="table table-bordered" id="datatable">
         <thead class="text-center">
             <tr>
@@ -64,6 +67,32 @@
                 console.error(eerror)
             }
         }
+        const addCreateForm = async () => {
+            try {
+                const response = await getAjax(`./../php-file//sku-create.php`);
+                openModal("Create Subcategories", response)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        const save = async (formData) => {
+            try {
+                const response = await saveAjax(`${baseUrl}sku/create`, formData);
+                closeModal()
+                skuList()
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        $('#saveItem').click(function() {
+            const formData = getFormData('sku-create')
+            save(formData)
+        })
+        $("#create-btn").click(function() {
+            addCreateForm();
+        })
 
         $("#datatable tbody").on('click', '.delete-btn', function() {
             let id = $(this).data('id');

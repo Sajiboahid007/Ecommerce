@@ -1,8 +1,14 @@
 <?php include '../php-file/topbar.php'; ?>
 <?php include '../php-file/sidebar.php'; ?>
-
 <div class="card-body">
-    <h2>Sub Categories</h2>
+    <div class="row">
+        <div class="col-sm-3">
+            <button class="btn btn-success" id="create-btn">Add Sub Categories</button>
+        </div>
+
+        <h3 class="col-sm-6 text-center">Sub Categories</h3>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
             <thead>
@@ -71,6 +77,33 @@
                 console.error(error);
             }
         }
+        const addCreateForm = async () => {
+            try {
+                const response = await getAjax(`./../php-file/subcategories-create.php`);
+                openModal("Create Subcategories", response)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        const save = async (formData) => {
+            try {
+                const response = await saveAjax(`${baseUrl}subcategories/create`, formData)
+                closeModal();
+                subCategoryList()
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        $("#saveItem").click(function() {
+            const formData = getFormData('subcategories-create');
+            save(formData);
+        })
+
+        $("#create-btn").click(function() {
+            addCreateForm();
+        })
 
         $("#dataTable tbody").on('click', '.deleteBtn', function() {
             let id = $(this).data('id');
