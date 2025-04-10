@@ -381,7 +381,7 @@ app.post("/subcategories/create", authenticate, (req, res) => __awaiter(void 0, 
         const subCategoriesdata = yield prisma.subCategories.create({
             data: {
                 Name: subcategories === null || subcategories === void 0 ? void 0 : subcategories.Name,
-                CategoryId: subcategories === null || subcategories === void 0 ? void 0 : subcategories.CategoryId,
+                CategoryId: Number(subcategories === null || subcategories === void 0 ? void 0 : subcategories.CategoryId),
                 CreatedBy: req.userEmail,
                 CreateDate: new Date(),
             },

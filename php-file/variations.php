@@ -26,7 +26,6 @@
         const variationList = async () => {
             try {
                 const response = await getAjax(`${baseUrl}variation/get`)
-                console.log(response)
                 let columns = [{
                         data: "Id",
                         render: function(data, type, row, meta) {

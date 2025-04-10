@@ -461,7 +461,7 @@ app.post(
       const subCategoriesdata = await prisma.subCategories.create({
         data: {
           Name: subcategories?.Name,
-          CategoryId: subcategories?.CategoryId,
+          CategoryId: Number(subcategories?.CategoryId),
           CreatedBy: req.userEmail,
           CreateDate: new Date(),
         },
