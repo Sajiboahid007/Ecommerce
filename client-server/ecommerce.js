@@ -466,7 +466,9 @@ app.get("/variation/getBYId/:id", authenticate, (req, res) => __awaiter(void 0, 
         const variationsList = yield prisma.variations.findFirst({
             where: { Id: id },
         });
-        return res.status(200 /* HttpStatusCode.Ok */).json(variationsList);
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, variationsList, ""));
     }
     catch (error) {
         return res
@@ -544,6 +546,21 @@ app.delete("/variation/delete/:id", authenticate, (req, res) => __awaiter(void 0
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
     }
 }));
+app.get("/productImage/get", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const productImageLsit = yield prisma.productImages.findMany({
+            orderBy: { Id: "desc" },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, productImageLsit, ""));
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
 app.get("/productImage/getByProdutId/:id", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const productId = Number(req === null || req === void 0 ? void 0 : req.params.id);
@@ -551,6 +568,28 @@ app.get("/productImage/getByProdutId/:id", authenticate, (req, res) => __awaiter
             where: { ProductId: productId },
         });
         return res.status(200 /* HttpStatusCode.Ok */).json(images);
+    }
+    catch (error) {
+        return res
+            .status(400 /* HttpStatusCode.BadRequest */)
+            .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.post("/productImage/create", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const reqdata = req === null || req === void 0 ? void 0 : req.body;
+        const productImage = yield prisma.productImages.create({
+            data: {
+                Url: reqdata === null || reqdata === void 0 ? void 0 : reqdata.Url,
+                VariationId: Number(reqdata === null || reqdata === void 0 ? void 0 : reqdata.VariationId),
+                ProductId: Number(reqdata === null || reqdata === void 0 ? void 0 : reqdata.ProductId),
+                CreatedBy: req === null || req === void 0 ? void 0 : req.userEmail,
+                CreateDate: new Date(),
+            },
+        });
+        return res
+            .status(200 /* HttpStatusCode.Ok */)
+            .json(prepareData(200 /* HttpStatusCode.Ok */, productImage, ""));
     }
     catch (error) {
         return res
@@ -782,5 +821,34 @@ app.delete("/color/delete/:id", authenticate, (req, res) => __awaiter(void 0, vo
         return res
             .status(400 /* HttpStatusCode.BadRequest */)
             .json({ message: error === null || error === void 0 ? void 0 : error.message });
+    }
+}));
+app.post("/chat", authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Replace with your actual Gemini API key
+    const GEMINI_API = "AIzaSyAsGlOmIwNcjxw_bd_CVoKaTgCi_0127vM";
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API}`;
+    const { message } = req.body;
+    try {
+        const response = yield fetch(GEMINI_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: message }] }],
+            }),
+        });
+        const data = yield response.json();
+        if (data.candidates && data.candidates.length > 0) {
+            return res
+                .status(200 /* HttpStatusCode.Ok */)
+                .json(prepareData(200 /* HttpStatusCode.Ok */, data.candidates[0].content.parts[0].text, ""));
+        }
+        else {
+            return res
+                .status(400 /* HttpStatusCode.BadRequest */)
+                .json({ message: "No response from Gemini API" });
+        }
+    }
+    catch (err) {
+        return res.status(400 /* HttpStatusCode.BadRequest */).json({ message: err });
     }
 }));

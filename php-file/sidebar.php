@@ -53,6 +53,7 @@
                     <a class="collapse-item" href="sub-category.php">Sub Categories</a>
                     <a class="collapse-item" href="sku.php">SKU</a>
                     <a class="collapse-item" href="colors.php">Colors</a>
+                    <a class="collapse-item" href="AiBot.php">Live chat</a>
                 </div>
             </div>
 

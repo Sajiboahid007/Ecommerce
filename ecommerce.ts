@@ -2,6 +2,7 @@ import { NextFunction, Request, response, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { realpathSync } from "fs";
 import { Param } from "@prisma/client/runtime/library";
+import { error } from "console";
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -561,7 +562,9 @@ app.get(
       const variationsList = await prisma.variations.findFirst({
         where: { Id: id },
       });
-      return res.status(HttpStatusCode.Ok).json(variationsList);
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, variationsList, ""));
     } catch (error: any) {
       return res
         .status(HttpStatusCode.BadRequest)
@@ -653,6 +656,25 @@ app.delete(
 );
 
 app.get(
+  "/productImage/get",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const productImageLsit = await prisma.productImages.findMany({
+        orderBy: { Id: "desc" },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, productImageLsit, ""));
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.get(
   "/productImage/getByProdutId/:id",
   authenticate,
   async (req: AuthenticatedRequest, res: Response) => {
@@ -662,6 +684,32 @@ app.get(
         where: { ProductId: productId },
       });
       return res.status(HttpStatusCode.Ok).json(images);
+    } catch (error: any) {
+      return res
+        .status(HttpStatusCode.BadRequest)
+        .json({ message: error?.message });
+    }
+  }
+);
+
+app.post(
+  "/productImage/create",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const reqdata = req?.body;
+      const productImage = await prisma.productImages.create({
+        data: {
+          Url: reqdata?.Url,
+          VariationId: Number(reqdata?.VariationId),
+          ProductId: Number(reqdata?.ProductId),
+          CreatedBy: req?.userEmail,
+          CreateDate: new Date(),
+        },
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(prepareData(HttpStatusCode.Ok, productImage, ""));
     } catch (error: any) {
       return res
         .status(HttpStatusCode.BadRequest)
@@ -936,6 +984,49 @@ app.delete(
       return res
         .status(HttpStatusCode.BadRequest)
         .json({ message: error?.message });
+    }
+  }
+);
+
+app.post(
+  "/chat",
+  authenticate,
+  async (req: AuthenticatedRequest, res: Response) => {
+    // Replace with your actual Gemini API key
+    const GEMINI_API = "AIzaSyAsGlOmIwNcjxw_bd_CVoKaTgCi_0127vM";
+
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API}`;
+
+    const { message } = req.body;
+
+    try {
+      const response = await fetch(GEMINI_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: message }] }],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.candidates && data.candidates.length > 0) {
+        return res
+          .status(HttpStatusCode.Ok)
+          .json(
+            prepareData(
+              HttpStatusCode.Ok,
+              data.candidates[0].content.parts[0].text,
+              ""
+            )
+          );
+      } else {
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .json({ message: "No response from Gemini API" });
+      }
+    } catch (err: any) {
+      return res.status(HttpStatusCode.BadRequest).json({ message: err });
     }
   }
 );
