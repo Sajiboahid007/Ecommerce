@@ -1,20 +1,23 @@
 <?php include '../php-file/topbar.php'; ?>
 <?php include '../php-file/sidebar.php'; ?>
 
-<div class="table-responsive">
-    <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
-        <thead>
-            <tr>
-                <th>Sl. no</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Create Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<div class="card-body">
+    <button class="btn btn-success" id="create-btn">Add user</button>
+    <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" cellspacing="0" style="overflow-x: hidden;">
+            <thead>
+                <tr>
+                    <th>Sl. no</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Create Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 <?php include '../php-file/footer.php'; ?>
 

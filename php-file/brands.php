@@ -96,10 +96,29 @@
                 const response = await saveAjax(`${baseUrl}brand/create`, FormData);
                 closeModal();
                 generateList();
+                successMessage("Successfully Saved")
             } catch (error) {
                 console.error(error)
             }
         }
+
+        const update = async (formdata) => {
+            try {
+                const response = await updateAjax(`${baseUrl}brand/update/${formdata?.Id}`, formdata);
+                closeModal();
+                generateList();
+                successMessage("Successfully Updated");
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+
+        $('#updateItem').click(function() {
+            const formdata = getFormData('brandsUpdate');
+            console.log(formdata)
+            update(formdata)
+        })
 
 
         $('#saveItem').click(function() {
@@ -111,12 +130,16 @@
         })
 
 
-        $('#dataTable tbody').on('click', '.edit-btn', function() {
+        $('#dataTable tbody').on('click', '.edit-btn', async function() {
             let id = $(this).data("id");
-            alert("Editing ID: " + id);
+            const response = await getAjax(`${baseUrl}brand/getById/${id}`);
+            const updateData = await getAjax(`./../php-file/brands_update.php`)
+            openModal("Update Brands", updateData, true);
+            setFormData('brandsUpdate', response);
+
         });
 
-        $('#dataTable tbody').on('click', '.delete-btn', function() {
+        $('#dataTable tbody').on('click', '.delete-btn', async function() {
             let id = $(this).data("id");
             if (confirm("Are you sure you want to delete ID: " + id + "?")) {
                 Delete(id)

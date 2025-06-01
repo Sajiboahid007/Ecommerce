@@ -994,7 +994,6 @@ app.post(
   async (req: AuthenticatedRequest, res: Response) => {
     // Replace with your actual Gemini API key
     const GEMINI_API = "AIzaSyAsGlOmIwNcjxw_bd_CVoKaTgCi_0127vM";
-
     const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API}`;
 
     const { message } = req.body;

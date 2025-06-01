@@ -12,6 +12,13 @@
 
     <title>Ecommerce</title>
 
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Custom fonts for this template-->
     <link href="../cdn/all.min.css" rel="stylesheet" type="text/css" />
 

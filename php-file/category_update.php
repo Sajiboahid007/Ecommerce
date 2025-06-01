@@ -1,4 +1,5 @@
-<form id="create-brands">
+<form id="categoryUpdate">
+    <input type="hidden" class="form-control" name="Id">
     <div class="row">
         <div class="col-sm-12">
             <label class="ml-3" for="">Name</label>

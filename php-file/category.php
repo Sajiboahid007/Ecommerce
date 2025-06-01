@@ -89,6 +89,24 @@
             }
         }
 
+        const update = async (formdata) => {
+            try {
+                const response = await updateAjax(`${baseUrl}categories/update/${formdata.Id}`, formdata);
+
+                console.log(formdata);
+                closeModal();
+                categoryList();
+                successMessage("Successfully Updated");
+            } catch (error) {
+                errorMessage(error);
+            }
+        }
+
+        $('#updateItem').click(function() {
+            const formdata = getFormData('categoryUpdate');
+            update(formdata);
+        })
+
 
         $("#categoris-create").click(function() {
             addCreateForm();
@@ -98,6 +116,15 @@
             const formdata = getFormData('categories-create');
             save(formdata);
         })
+
+
+        $("#dataTable tbody").on("click", ".editBtn", async function() {
+            const id = $(this).data("id");
+            const response = await getAjax(`${baseUrl}categories/getById/${id}`);
+            const update = await getAjax(`./../php-file/category_update.php`);
+            openModal("Update Category", update, true);
+            setFormData('categoryUpdate', response)
+        });
         $("#dataTable").on("click", ".deleteBtn", function() {
             const id = $(this).data("id");
             if (confirm("Are you sure you want to delete this category?")) {

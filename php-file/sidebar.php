@@ -28,6 +28,7 @@
         <div class="sidebar-heading">Addons</div>
 
         <!-- Nav Item - Pages Collapse Menu -->
+
         <li class="nav-item">
             <a
                 class="nav-link collapsed"
@@ -37,12 +38,15 @@
                 aria-expanded="true"
                 aria-controls="collapsePages">
                 <span>Settings</span>
+
             </a>
+
             <div
                 id="collapsePages"
                 class="collapse"
                 aria-labelledby="headingPages"
                 data-parent="#accordionSidebar">
+
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="login.html">Login</a>
                     <a class="collapse-item" href="register.html ">Register</a>
@@ -53,8 +57,13 @@
                     <a class="collapse-item" href="sub-category.php">Sub Categories</a>
                     <a class="collapse-item" href="sku.php">SKU</a>
                     <a class="collapse-item" href="colors.php">Colors</a>
-                    <a class="collapse-item" href="AiBot.php">Live chat</a>
                 </div>
+            </div>
+
+            <div>
+                <a style="color:aliceblue;
+                         margin-left: 16px;"
+                    href="AiBot.php">Live chat</a>
             </div>
 
         </li>

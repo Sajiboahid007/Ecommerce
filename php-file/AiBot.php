@@ -39,17 +39,34 @@
         background-color: #f8f9fa;
     }
 
-    .message {
-        margin-bottom: 10px;
+    /* ✅ Chat Message Container */
+    #messageBody {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
+    /* ✅ Message Style */
+    .message {
+        max-width: 75%;
+        padding: 10px 15px;
+        border-radius: 12px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    /* ✅ User Bubble */
     .user {
-        text-align: right;
+        align-self: flex-end;
+        background-color: #e7f1ff;
         color: #0d6efd;
     }
 
+    /* ✅ Bot Bubble */
     .bot {
-        text-align: left;
+        align-self: flex-start;
+        background-color: #d7f9e8;
         color: #198754;
     }
 </style>
@@ -70,9 +87,6 @@
         </div>
     </div>
 </div>
-
-
-
 <?php include '../php-file/footer.php'; ?>
 
 <script>
@@ -83,11 +97,20 @@
                 const response = await saveAjax(`${baseUrl}chat`, {
                     message: message
                 })
-                console.log(response);
-                const userMessage = `<td style="width:700px" ></td><td class="text-end">${message}</td>`;
-                const aiMessage = `<td class="text-start">${response.data}</td> <td></td>`;
-                $("#messageBody").append(`<tr>${userMessage} </tr>`);
-                $("#messageBody").append(`<tr>${aiMessage}</tr>`);
+
+                // Show user message
+                const userMsgHTML = `<div class="message user"><strong>You:</strong> ${message}</div>`;
+                $("#messageBody").append(userMsgHTML);
+                $('#user-input').val("");
+                // const userMessage = `<td style="width:700px" ></td><td class="text-end">${message}</td>`;
+                // const aiMessage = `<td class="text-start">${response.data}</td> <td></td>`;
+                // $("#messageBody").append(`<tr>${userMessage} </tr>`);
+                // $("#messageBody").append(`<tr>${aiMessage}</tr>`);
+
+                const botMsgHTML = `<div class="message bot"><strong>Bot:</strong> ${response.data}</div>`;
+                $("#messageBody").append(botMsgHTML);
+
+                $('.messages').scrollTop($('.messages')[0].scrollHeight);
 
             } catch (error) {
                 console.error(error)
